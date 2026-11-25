@@ -20,6 +20,19 @@ export function createDefaultDocument(): DominoDocument {
     domino('d9', 15.2, 4.05, 0, '12'),
     domino('d10', 16.8, 4.05, 0, '13'),
     { ...domino('t1', 18.4, 2.3, 0, '终点 A'), kind: 'trigger', width: 0.7 },
+
+    // —— 倒下扫掠验证区（底部） ——
+    // ① 斜放在坡道上的牌：沿坡面朝向倒下，预览带坡面倾角与提前着陆
+    { ...domino('vr', 4.2, 7.35, 0, '坡道牌'), kind: 'domino', height: 1.6, width: 0.42 },
+    { ...domino('vrm', 4.2, 7.35, 0, '验证坡道'), kind: 'ramp', width: 1.7, height: 0.45 },
+    domino('vrt', 6.0, 7.35, 0, '坡前牌'),
+    // ② 间隔很窄的旁排：站立轮廓不重叠，倒下却会扫到侧排（命中侧边）
+    domino('vna', 9.2, 7.6, 0, '主排 A'),
+    domino('vnb', 10.8, 7.6, 0, '主排 B'),
+    domino('vside', 10.25, 7.88, 0, '窄距旁排'),
+    // ③ 方向正好背离的近邻：站立脚位不重叠，倒下扫中其朝来源一侧的前边
+    domino('vfb', 13.6, 7.4, 0, '朝向牌'),
+    domino('vba', 14.7, 7.4, 180, '背离近邻'),
   ]
   return {
     id: 'chainline-starter',

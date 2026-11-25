@@ -1,5 +1,5 @@
 import type { DominoDocument, Piece, SimulationEvent } from '@/shared/document'
-import { nextContact } from '@/features/layout'
+import { simulateNextContact } from '@/features/layout'
 
 interface Scheduled {
   pieceId: string
@@ -50,21 +50,23 @@ export function propagate(document: DominoDocument) {
 
     const available = document.pieces.filter(item => !fallen.has(item.id) && item.id !== piece.id)
     const surfaceGrip = (document.scene.friction + piece.friction) / 2
-    const reachScale = (0.94 + surfaceGrip * 0.35) * (1.25 - piece.fallThreshold * 0.25)
     let target: Piece | null = null
     if (piece.kind === 'ramp') {
       target = available.filter(item => item.x > piece.x && Math.abs(item.y - piece.y) < 2.1)
         .sort((a, b) => a.x - b.x || a.id.localeCompare(b.id))[0] ?? null
     } else {
-      target = nextContact(piece, available, reachScale)
+      // 与拖动预览共用同一套扫掠碰撞判断
+      target = simulateNextContact(piece, available, document.scene.friction).piece
     }
     if (target) {
       const separation = Math.hypot(piece.x - target.x, piece.y - target.y)
       const speed = Math.max(1.8, piece.height * document.scene.gravity / 2) * (0.75 + surfaceGrip * 0.5)
       const travel = Math.max(0.24, separation / speed)
+      const hitKind = target.kind === 'ramp' ? 'ramp-block' : 'piece'
       queue.push({
         pieceId: target.id, time: next.time + travel, causeId: event.id,
-        detail: piece.kind === 'splitter' ? '分岔臂接触' : piece.kind === 'ramp' ? '坡面末端接触' : '相邻接触',
+        detail: piece.kind === 'splitter' ? '分岔臂接触'
+          : hitKind === 'ramp-block' ? '坡面拦截接触' : '相邻接触',
       })
     }
 

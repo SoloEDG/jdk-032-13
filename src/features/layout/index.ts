@@ -3,3 +3,12 @@ export { default as BuildCanvas } from './ui/BuildCanvas.vue'
 export { default as PiecePalette } from './ui/PiecePalette.vue'
 export { default as ObjectInspector } from './ui/ObjectInspector.vue'
 export { distance, nextContact } from './lib/geometry'
+export {
+  analyzeFall,
+  simulateNextContact,
+  reachScaleOf,
+  contactEdgeLabel,
+  type FallSweep,
+  type ContactInfo,
+  type ContactEdge,
+} from './lib/fallSweep'
